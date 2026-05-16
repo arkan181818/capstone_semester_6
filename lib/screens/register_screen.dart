@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/home_screen.dart';
+import 'otp_verification_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,16 +15,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      /// APPBAR
       appBar: AppBar(
         title: const Text("RUNTRACK"),
         backgroundColor: Colors.white,
         foregroundColor: Colors.orange,
         elevation: 0,
       ),
+
+      /// BODY
       body: SingleChildScrollView(
         child: Container(
           color: const Color(0xFFF5F5F5),
           padding: const EdgeInsets.all(20),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -42,58 +47,122 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const Text(
                 "Step into the race management ecosystem.",
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
               ),
 
               const SizedBox(height: 20),
 
-              /// INPUTS
-              buildInput("FULL NAME", "E.g. Budi Santoso"),
-              buildInput("EMAIL ADDRESS", "runner@example.com"),
-              buildInput("NOMOR TELEPON", "E.g. +62 812..."),
-              buildInput("PASSWORD", "******", isPassword: true),
-              buildInput("CONFIRM", "******", isPassword: true),
+              /// INPUT FULL NAME
+              buildInput(
+                "FULL NAME",
+                "E.g. Budi Santoso",
+              ),
 
-              const SizedBox(height: 10),
+              /// INPUT EMAIL
+              buildInput(
+                "EMAIL ADDRESS",
+                "runner@example.com",
+              ),
 
-              /// DROPDOWN
-              const Text("JENIS KELAMIN"),
-              const SizedBox(height: 5),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  filled: true,
-                  fillColor: Color(0xFFEFEFEF),
-                  border: InputBorder.none,
-                ),
-                hint: const Text("Pilih Jenis Kelamin"),
-                items: const [
-                  DropdownMenuItem(value: "L", child: Text("Laki-laki")),
-                  DropdownMenuItem(value: "P", child: Text("Perempuan")),
-                ],
-                onChanged: (value) {},
+              /// INPUT PHONE
+              buildInput(
+                "NOMOR TELEPON",
+                "E.g. +62 812...",
+              ),
+
+              /// PASSWORD
+              buildInput(
+                "PASSWORD",
+                "******",
+                isPassword: true,
+              ),
+
+              /// CONFIRM PASSWORD
+              buildInput(
+                "CONFIRM PASSWORD",
+                "******",
+                isPassword: true,
               ),
 
               const SizedBox(height: 10),
 
-              buildInput("ALAMAT", "Masukkan alamat lengkap Anda"),
+              /// DROPDOWN GENDER
+              const Text(
+                "JENIS KELAMIN",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color(0xFFEFEFEF),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+
+                hint: const Text(
+                  "Pilih Jenis Kelamin",
+                ),
+
+                items: const [
+
+                  DropdownMenuItem(
+                    value: "L",
+                    child: Text("Laki-laki"),
+                  ),
+
+                  DropdownMenuItem(
+                    value: "P",
+                    child: Text("Perempuan"),
+                  ),
+                ],
+
+                onChanged: (value) {},
+              ),
+
+              const SizedBox(height: 15),
+
+              /// ADDRESS
+              buildInput(
+                "ALAMAT",
+                "Masukkan alamat lengkap Anda",
+              ),
 
               const SizedBox(height: 10),
 
               /// CHECKBOX
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Checkbox(
+                    activeColor: Colors.orange,
                     value: isChecked,
+
                     onChanged: (v) {
                       setState(() {
                         isChecked = v!;
                       });
                     },
                   ),
+
                   const Expanded(
-                    child: Text(
-                      "I agree to the Terms of Service and Privacy Policy.",
-                      style: TextStyle(fontSize: 12),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 12),
+                      child: Text(
+                        "I agree to the Terms of Service and Privacy Policy.",
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -101,32 +170,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const SizedBox(height: 20),
 
-              /// BUTTON
+              /// BUTTON REGISTER
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 55,
+
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
+
                   onPressed: isChecked
                       ? () {
-                          Navigator.pushReplacement(
+
+                          /// PINDAH KE OTP SCREEN
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const HomeScreen(),
+                              builder: (context) => OtpScreen(),
                             ),
                           );
                         }
-                      : null, // disable kalau belum centang
+                      : null,
+
                   child: const Text(
                     "CREATE ACCOUNT →",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
 
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
 
               /// LOGIN LINK
               Center(
@@ -134,10 +215,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onTap: () {
                     Navigator.pop(context);
                   },
+
                   child: const Text.rich(
                     TextSpan(
                       text: "Already part of the track? ",
+                      style: TextStyle(
+                        color: Colors.black87,
+                      ),
+
                       children: [
+
                         TextSpan(
                           text: "LOGIN",
                           style: TextStyle(
@@ -150,6 +237,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
+
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -157,24 +246,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  /// INPUT WIDGET
-  Widget buildInput(String label, String hint,
-      {bool isPassword = false}) {
+  /// ================= INPUT WIDGET =================
+  Widget buildInput(
+    String label,
+    String hint, {
+    bool isPassword = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 5),
-        TextField(
-          obscureText: isPassword,
-          decoration: InputDecoration(
-            hintText: hint,
-            filled: true,
-            fillColor: const Color(0xFFEFEFEF),
-            border: InputBorder.none,
+
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 10),
+
+        const SizedBox(height: 5),
+
+        TextField(
+          obscureText: isPassword,
+
+          decoration: InputDecoration(
+            hintText: hint,
+
+            filled: true,
+            fillColor: const Color(0xFFEFEFEF),
+
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 14),
       ],
     );
   }

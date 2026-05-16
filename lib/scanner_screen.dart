@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScannerScreen extends StatefulWidget {
@@ -145,8 +146,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       actionButton(
                         Icons.arrow_back,
                         () {
-                          Navigator.pop(
-                              context);
+                          Get.back();
                         },
                       ),
 

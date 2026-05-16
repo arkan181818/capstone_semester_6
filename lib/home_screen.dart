@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 import 'riwayat_screen.dart';
 import 'profile_screen.dart';
 import 'detail_event_screen.dart';
@@ -105,20 +107,11 @@ class HomeScreen extends StatelessWidget {
                   /// INFO EVENT
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DetailEventScreen(
-                            image:
-                                "assets/images/event1.png",
-                            title:
-                                "BSI Runfest",
-                            price:
-                                "Rp 150.000",
-                          ),
-                        ),
-                      );
+                      Get.to(() => DetailEventScreen(
+                            image: "assets/images/event1.png",
+                            title: "BSI Runfest",
+                            price: "Rp 150.000",
+                          ));
                     },
                     child: const MenuItem(
                       Icons.event,
@@ -129,13 +122,7 @@ class HomeScreen extends StatelessWidget {
                   /// RIWAYAT
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const RiwayatScreen(),
-                        ),
-                      );
+                      Get.to(() => const RiwayatScreen());
                     },
                     child: const MenuItem(
                       Icons.history,
@@ -176,13 +163,7 @@ class HomeScreen extends StatelessWidget {
                   /// LIHAT SEMUA
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const EventListScreen(),
-                        ),
-                      );
+                      Get.to(() => const EventListScreen());
                     },
                     child: const Text(
                       "Lihat semua",
@@ -241,35 +222,17 @@ class HomeScreen extends StatelessWidget {
         onTap: (index) {
           /// EVENT
           if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const EventListScreen(),
-              ),
-            );
+            Get.toNamed(AppRoutes.eventList);
           }
 
           /// SCANNER
           if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const ScannerScreen(),
-              ),
-            );
+            Get.toNamed(AppRoutes.scanner);
           }
 
           /// PROFILE
           if (index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const ProfileScreen(),
-              ),
-            );
+            Get.toNamed(AppRoutes.profile);
           }
         },
 
@@ -361,17 +324,11 @@ class EventCard extends StatelessWidget {
     return GestureDetector(
       /// KLIK CARD
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                DetailEventScreen(
+        Get.to(() => DetailEventScreen(
               image: image,
               title: title,
               price: price,
-            ),
-          ),
-        );
+            ));
       },
 
       child: Container(

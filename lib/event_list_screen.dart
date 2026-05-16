@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 import 'detail_event_screen.dart';
 
 class EventListScreen extends StatelessWidget {
@@ -124,16 +126,11 @@ class EventListScreen extends StatelessWidget {
               /// EVENT CARD
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DetailEventScreen(
-                        image: "assets/images/event1.png",
-                        title: "RunTrack City Run 2026",
-                        price: "Rp 175.000",
-                      ),
-                    ),
-                  );
+                  Get.toNamed(AppRoutes.detailEvent, arguments: {
+                    'image': "assets/images/event1.png",
+                    'title': "RunTrack City Run 2026",
+                    'price': "Rp 175.000",
+                  });
                 },
                 child: Container(
                   decoration: BoxDecoration(

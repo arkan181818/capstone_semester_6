@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'register_screen.dart'; //
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -102,7 +103,9 @@ class LoginScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.brown,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.offNamed(AppRoutes.home);
+                    },
                     child: const Text("LOGIN →"),
                   ),
                 ),
@@ -116,12 +119,7 @@ class LoginScreen extends StatelessWidget {
                     const Text("Don't have an account? "),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterScreen(),
-                          ),
-                        );
+                        Get.toNamed(AppRoutes.register);
                       },
                       child: const Text(
                         "Sign Up",

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'event_list_screen.dart';
 
 class DetailEventScreen extends StatelessWidget {
@@ -12,6 +13,15 @@ class DetailEventScreen extends StatelessWidget {
     required this.title,
     required this.price,
   });
+
+  factory DetailEventScreen.fromArgs() {
+    final args = Get.arguments as Map<String, String>? ?? {};
+    return DetailEventScreen(
+      image: args['image'] ?? 'assets/images/event1.png',
+      title: args['title'] ?? 'RunTrack Event',
+      price: args['price'] ?? 'Rp 0',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,13 +105,7 @@ class DetailEventScreen extends StatelessWidget {
               /// LIHAT SEMUA
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const EventListScreen(),
-                    ),
-                  );
+                  Get.to(() => const EventListScreen());
                 },
 
                 child: const Text(

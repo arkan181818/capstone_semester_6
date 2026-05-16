@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 import 'notification_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -137,12 +139,7 @@ class ProfileScreen extends StatelessWidget {
               Icons.notifications_none,
               "Notifications",
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationScreen(),
-                  ),
-                );
+                Get.toNamed(AppRoutes.notification);
               },
             ),
 

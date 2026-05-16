@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart'; // ⬅️ IMPORT HALAMAN LOGIN
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 
 class RunTrackScreen extends StatelessWidget {
   const RunTrackScreen({super.key});
@@ -98,12 +99,7 @@ class RunTrackScreen extends StatelessWidget {
                       backgroundColor: Colors.orange,
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
+                      Get.toNamed(AppRoutes.login);
                     },
                     child: const Text(
                       "MULAI SEKARANG →",
