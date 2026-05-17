@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'controllers/bottom_nav_controller.dart';
+import 'widgets/app_bottom_nav.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
@@ -14,6 +16,13 @@ class _ScannerScreenState extends State<ScannerScreen> {
       MobileScannerController();
 
   bool isFlashOn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final navController = Get.put(BottomNavController());
+    navController.setIndex(2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -236,36 +245,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
         ],
       ),
 
-      bottomNavigationBar:
-          BottomNavigationBar(
-        currentIndex: 2,
-        selectedItemColor:
-            Colors.deepOrange,
-        unselectedItemColor:
-            Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: "Events",
-          ),
-
-          BottomNavigationBarItem(
-            icon:
-                Icon(Icons.qr_code_scanner),
-            label: "Scanner",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
-        ],
-      ),
+      bottomNavigationBar: AppBottomNav(),
     );
   }
 

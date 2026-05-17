@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'routes/app_routes.dart';
 import 'event_list_screen.dart';
 
 class DetailEventScreen extends StatelessWidget {
@@ -417,24 +418,35 @@ class DetailEventScreen extends StatelessWidget {
         currentIndex: 1,
         selectedItemColor: Colors.orange,
         unselectedItemColor: Colors.grey,
-
-        items: const [
-
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Get.offNamed(AppRoutes.home);
+              break;
+            case 1:
+              Get.offNamed(AppRoutes.eventList);
+              break;
+            case 2:
+              Get.offNamed(AppRoutes.scanner);
+              break;
+            case 3:
+              Get.offNamed(AppRoutes.profile);
+              break;
+          }
+        },
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: "HOME",
           ),
-
           BottomNavigationBarItem(
             icon: Icon(Icons.event),
             label: "EVENTS",
           ),
-
           BottomNavigationBarItem(
             icon: Icon(Icons.qr_code_scanner),
             label: "SCANNER",
           ),
-
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             label: "PROFILE",

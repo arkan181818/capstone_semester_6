@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../routes/app_routes.dart';
+import '../controllers/bottom_nav_controller.dart';
+import '../widgets/app_bottom_nav.dart';
 import 'riwayat_screen.dart';
-import 'profile_screen.dart';
 import 'detail_event_screen.dart';
 import 'event_list_screen.dart';
-import 'scanner_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(BottomNavController());
+    controller.setIndex(0);
+    
     return Scaffold(
       backgroundColor: Colors.grey[100],
 
@@ -211,54 +213,7 @@ class HomeScreen extends StatelessWidget {
       ),
 
       /// BOTTOM NAV
-      bottomNavigationBar:
-          BottomNavigationBar(
-        selectedItemColor:
-            Colors.orange,
-        unselectedItemColor:
-            Colors.grey,
-        currentIndex: 0,
-
-        onTap: (index) {
-          /// EVENT
-          if (index == 1) {
-            Get.toNamed(AppRoutes.eventList);
-          }
-
-          /// SCANNER
-          if (index == 2) {
-            Get.toNamed(AppRoutes.scanner);
-          }
-
-          /// PROFILE
-          if (index == 3) {
-            Get.toNamed(AppRoutes.profile);
-          }
-        },
-
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Beranda",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: "Event",
-          ),
-
-          BottomNavigationBarItem(
-            icon:
-                Icon(Icons.qr_code_scanner),
-            label: "Scan",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profil",
-          ),
-        ],
-      ),
+      bottomNavigationBar: AppBottomNav(),
     );
   }
 }
