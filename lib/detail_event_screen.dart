@@ -386,7 +386,18 @@ class DetailEventScreen extends StatelessWidget {
                                   ),
                                 ),
 
-                                onPressed: () {},
+                                onPressed: () {
+                                  Get.toNamed(
+                                    AppRoutes.payment,
+                                    arguments: {
+                                      'title': title,
+                                      'price': price,
+                                      'date': '30 Agustus 2026',
+                                      'location': 'Alun-Alun Kota Tegal',
+                                      'category': '10K Competitive Category',
+                                    },
+                                  );
+                                },
 
                                 child: const Text(
                                   "Daftar",
