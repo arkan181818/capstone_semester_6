@@ -279,7 +279,18 @@ class EventListScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.toNamed(
+                                      AppRoutes.payment,
+                                      arguments: {
+                                        'title': 'RunTrack City Run 2026',
+                                        'price': 'Rp 175.000',
+                                        'date': '10 Juli 2026',
+                                        'location': 'Kota Tegal, Central Java',
+                                        'category': '10K Competitive',
+                                      },
+                                    );
+                                  },
                                   child: const Text(
                                     "Daftar",
                                     style: TextStyle(color: Colors.white),
