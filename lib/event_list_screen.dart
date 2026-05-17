@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../routes/app_routes.dart';
 import '../controllers/bottom_nav_controller.dart';
 import '../widgets/app_bottom_nav.dart';
+import 'bahari_run_detail_screen.dart';
 
 class EventListScreen extends StatelessWidget {
   const EventListScreen({super.key});
@@ -280,15 +281,11 @@ class EventListScreen extends StatelessWidget {
                                     ),
                                   ),
                                   onPressed: () {
-                                    Get.toNamed(
-                                      AppRoutes.payment,
-                                      arguments: {
-                                        'title': 'RunTrack City Run 2026',
-                                        'price': 'Rp 175.000',
-                                        'date': '10 Juli 2026',
-                                        'location': 'Kota Tegal, Central Java',
-                                        'category': '10K Competitive',
-                                      },
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BahariRunDetailScreen(),
+                                      ),
                                     );
                                   },
                                   child: const Text(
