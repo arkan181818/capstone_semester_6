@@ -9,6 +9,7 @@ abstract class AppRoutes {
   static const payment = '/payment';
   static const scanner = '/scanner';
   static const profile = '/profile';
+  static const editProfile = '/edit-profile';
   static const riwayat = '/riwayat';
   static const notification = '/notification';
 }

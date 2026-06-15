@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../routes/app_routes.dart';
+
+import '../config/api_config.dart';
 import '../controllers/bottom_nav_controller.dart';
+import '../models/profile_model.dart';
+import '../routes/app_routes.dart';
+import '../services/profile_service.dart';
 import '../widgets/app_bottom_nav.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.put(BottomNavController());
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late final BottomNavController controller;
+  late Future<ProfileModel> profileFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(BottomNavController());
     controller.setIndex(3);
-    
+    profileFuture = ProfileService.fetchProfile();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f1ef),
-
-      /// APPBAR
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -33,154 +48,186 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-
-      /// BODY
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-
-            /// FOTO PROFILE
-            CircleAvatar(
-              radius: 42,
-              backgroundColor: Colors.orange.shade100,
-              backgroundImage: const AssetImage("assets/images/profile.png"),
-            ),
-
-            const SizedBox(height: 12),
-
-            /// NAMA
-            const Text(
-              "Tegal Runner",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      body: FutureBuilder<ProfileModel>(
+        future: profileFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 80),
+                child: CircularProgressIndicator(),
               ),
-            ),
+            );
+          }
 
-            const SizedBox(height: 6),
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      snapshot.error.toString(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          profileFuture = ProfileService.fetchProfile();
+                        });
+                      },
+                      child: const Text('Coba lagi'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
 
-            /// LOKASI
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          final profile = snapshot.data!;
+          final profileImage = profile.imageUrl.isNotEmpty ? profile.imageUrl : null;
+
+          return SingleChildScrollView(
+            child: Column(
               children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  size: 18,
-                  color: Colors.grey,
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: 84,
+                  height: 84,
+                  child: ClipOval(
+                    child: profileImage != null
+                        ? Image.network(
+                            profileImage,
+                            fit: BoxFit.cover,
+                            width: 84,
+                            height: 84,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/profile.png',
+                                fit: BoxFit.cover,
+                                width: 84,
+                                height: 84,
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            'assets/images/profile.png',
+                            fit: BoxFit.cover,
+                            width: 84,
+                            height: 84,
+                          ),
+                  ),
                 ),
-                SizedBox(width: 4),
+                const SizedBox(height: 12),
                 Text(
-                  "Kota Tegal, Central Java",
-                  style: TextStyle(color: Colors.grey),
+                  profile.nama,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            /// STATISTIK
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  statCard("42.5km", "TOTAL DISTANCE"),
-
-                  const SizedBox(width: 10),
-
-                  statCard("14", "RACES"),
-
-                  const SizedBox(width: 10),
-
-                  statCard("12", "MEDALS"),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 28),
-
-            /// INFORMASI AKUN
-            sectionTitle("INFORMASI AKUN"),
-
-            infoTile(
-              Icons.email_outlined,
-              "EMAIL",
-              "runner@example.com",
-            ),
-
-            infoTile(
-              Icons.phone_outlined,
-              "NOMOR TELEPON",
-              "+62 812 3456 7890",
-            ),
-
-            infoTile(
-              Icons.person_outline,
-              "JENIS KELAMIN",
-              "Laki-laki",
-            ),
-
-            infoTile(
-              Icons.location_on_outlined,
-              "ALAMAT",
-              "Jl. Pancasila, Kota Tegal",
-            ),
-
-            const SizedBox(height: 20),
-
-            /// ACCOUNT SETTINGS
-            sectionTitle("ACCOUNT SETTINGS"),
-
-            settingTile(
-              context,
-              Icons.person_outline,
-              "Edit Profile",
-            ),
-
-            /// NOTIFICATION BUTTON
-            settingTile(
-              context,
-              Icons.notifications_none,
-              "Notifications",
-              onTap: () {
-                Get.toNamed(AppRoutes.notification);
-              },
-            ),
-
-            const SizedBox(height: 25),
-
-            /// LOGOUT BUTTON
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red,
-                    side: BorderSide(color: Colors.red.shade200),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 6),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.location_on_outlined,
+                      size: 18,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      profile.alamat ?? 'Alamat belum tersedia',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      statCard('42.5km', 'TOTAL DISTANCE'),
+                      const SizedBox(width: 10),
+                      statCard('14', 'RACES'),
+                      const SizedBox(width: 10),
+                      statCard('12', 'MEDALS'),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
+                sectionTitle('INFORMASI AKUN'),
+                infoTile(
+                  Icons.email_outlined,
+                  'EMAIL',
+                  profile.email,
+                ),
+                infoTile(
+                  Icons.phone_outlined,
+                  'NOMOR TELEPON',
+                  profile.nohp ?? '-',
+                ),
+                infoTile(
+                  Icons.person_outline,
+                  'USERNAME',
+                  profile.username,
+                ),
+                infoTile(
+                  Icons.location_on_outlined,
+                  'ALAMAT',
+                  profile.alamat ?? '-',
+                ),
+                const SizedBox(height: 20),
+                sectionTitle('ACCOUNT SETTINGS'),
+                settingTile(
+                  context,
+                  Icons.person_outline,
+                  'Edit Profile',
+                  onTap: () {
+                    Get.toNamed(AppRoutes.editProfile);
+                  },
+                ),
+                settingTile(
+                  context,
+                  Icons.notifications_none,
+                  'Notifications',
+                  onTap: () {
+                    Get.toNamed(AppRoutes.notification);
+                  },
+                ),
+                const SizedBox(height: 25),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: BorderSide(color: Colors.red.shade200),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {},
+                      icon: const Icon(Icons.logout),
+                      label: const Text('Logout'),
                     ),
                   ),
-                  onPressed: () {},
-                  icon: const Icon(Icons.logout),
-                  label: const Text("Logout"),
                 ),
-              ),
+                const SizedBox(height: 30),
+              ],
             ),
-
-            const SizedBox(height: 30),
-          ],
-        ),
+          );
+        },
       ),
-
-      /// BOTTOM NAVIGATION
       bottomNavigationBar: AppBottomNav(),
     );
   }
 
-  /// ================= STAT CARD =================
   static Expanded statCard(String value, String label) {
     return Expanded(
       child: Container(
@@ -199,9 +246,7 @@ class ProfileScreen extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-
             const SizedBox(height: 6),
-
             Text(
               label,
               textAlign: TextAlign.center,
@@ -216,7 +261,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  /// ================= SECTION TITLE =================
   static Widget sectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -237,7 +281,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  /// ================= INFO TILE =================
   static Widget infoTile(
     IconData icon,
     String title,
@@ -254,9 +297,7 @@ class ProfileScreen extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: Colors.deepOrange),
-
           const SizedBox(width: 14),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,9 +309,7 @@ class ProfileScreen extends StatelessWidget {
                     color: Colors.grey,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   subtitle,
                   style: const TextStyle(fontSize: 15),
@@ -283,7 +322,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  /// ================= SETTING TILE =================
   static Widget settingTile(
     BuildContext context,
     IconData icon,
@@ -303,16 +341,13 @@ class ProfileScreen extends StatelessWidget {
         child: Row(
           children: [
             Icon(icon, color: Colors.deepOrange),
-
             const SizedBox(width: 14),
-
             Expanded(
               child: Text(
                 title,
                 style: const TextStyle(fontSize: 15),
               ),
             ),
-
             const Icon(
               Icons.chevron_right,
               color: Colors.grey,

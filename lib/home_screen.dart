@@ -32,9 +32,7 @@ class HomeScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 15),
             child: CircleAvatar(
-              backgroundImage: NetworkImage(
-                "https://i.pravatar.cc/150?img=3",
-              ),
+              backgroundImage: AssetImage('assets/images/profile.png'),
             ),
           ),
         ],

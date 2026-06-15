@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../routes/app_routes.dart';
+import '../services/auth_service.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+  final String? email;
+  const OtpScreen({super.key, required this.email});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -11,17 +13,94 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
 
-  final TextEditingController otp1 =
-      TextEditingController();
+  final TextEditingController otp1 = TextEditingController();
+  final TextEditingController otp2 = TextEditingController();
+  final TextEditingController otp3 = TextEditingController();
+  final TextEditingController otp4 = TextEditingController();
+  final TextEditingController otp5 = TextEditingController();
+  final TextEditingController otp6 = TextEditingController();
 
-  final TextEditingController otp2 =
-      TextEditingController();
+  final FocusNode otp1Focus = FocusNode();
+  final FocusNode otp2Focus = FocusNode();
+  final FocusNode otp3Focus = FocusNode();
+  final FocusNode otp4Focus = FocusNode();
+  final FocusNode otp5Focus = FocusNode();
+  final FocusNode otp6Focus = FocusNode();
 
-  final TextEditingController otp3 =
-      TextEditingController();
+  bool isVerifying = false;
 
-  final TextEditingController otp4 =
-      TextEditingController();
+  Future<void> verifyOtp() async {
+    String otp =
+        otp1.text +
+        otp2.text +
+        otp3.text +
+        otp4.text +
+        otp5.text +
+        otp6.text;
+
+    if (otp.length != 6) {
+      Get.snackbar(
+        "Error",
+        "OTP harus 6 digit",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    if (widget.email == null || widget.email!.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Email tidak tersedia",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    setState(() {
+      isVerifying = true;
+    });
+
+    final result = await AuthService.verifyOtp(
+      email: widget.email!,
+      otp: otp,
+    );
+
+    setState(() {
+      isVerifying = false;
+    });
+
+    if (result["status"] == 200) {
+      Get.snackbar(
+        "Sukses",
+        "Verifikasi berhasil",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      Get.offNamed(AppRoutes.login);
+    } else {
+      Get.snackbar(
+        "Error",
+        result["data"]["msg"],
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    otp1.dispose();
+    otp2.dispose();
+    otp3.dispose();
+    otp4.dispose();
+    otp5.dispose();
+    otp6.dispose();
+    otp1Focus.dispose();
+    otp2Focus.dispose();
+    otp3Focus.dispose();
+    otp4Focus.dispose();
+    otp5Focus.dispose();
+    otp6Focus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,8 +185,8 @@ class _OtpScreenState extends State<OtpScreen> {
                           height: 14),
 
                       /// SUBTITLE
-                      const Text(
-                        "Kami telah mengirimkan kode OTP ke\nemail Anda name@event.com",
+                      Text(
+                        "Kami telah mengirimkan kode OTP ke\nemail Anda ${widget.email ?? 'name@event.com'}",
                         textAlign:
                             TextAlign.center,
                         style: TextStyle(
@@ -126,14 +205,36 @@ class _OtpScreenState extends State<OtpScreen> {
                             MainAxisAlignment
                                 .spaceBetween,
                         children: [
-
-                          otpBox(otp1),
-
-                          otpBox(otp2),
-
-                          otpBox(otp3),
-
-                          otpBox(otp4),
+                          otpBox(
+                            otp1,
+                            otp1Focus,
+                            nextFocus: otp2Focus,
+                          ),
+                          otpBox(
+                            otp2,
+                            otp2Focus,
+                            nextFocus: otp3Focus,
+                          ),
+                          otpBox(
+                            otp3,
+                            otp3Focus,
+                            nextFocus: otp4Focus,
+                          ),
+                          otpBox(
+                            otp4,
+                            otp4Focus,
+                            nextFocus: otp5Focus,
+                          ),
+                          otpBox(
+                            otp5,
+                            otp5Focus,
+                            nextFocus: otp6Focus,
+                          ),
+                          otpBox(
+                            otp6,
+                            otp6Focus,
+                            nextFocus: null,
+                          ),
                         ],
                       ),
 
@@ -163,43 +264,24 @@ class _OtpScreenState extends State<OtpScreen> {
                             ),
                           ),
 
-                          onPressed: () {
-
-                            String otp =
-                                otp1.text +
-                                    otp2.text +
-                                    otp3.text +
-                                    otp4.text;
-
-                            if (otp.length ==
-                                4) {
-
-                              /// PINDAH KE HOME
-                              Get.offNamed(
-                                AppRoutes.home,
-                              );
-
-                            } else {
-                              Get.snackbar(
-                                'Error',
-                                'Masukkan OTP lengkap',
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            }
-                          },
-
-                          child: const Text(
-                            "VERIFIKASI",
-                            style: TextStyle(
-                              color:
-                                  Colors.white,
-                              fontWeight:
-                                  FontWeight
-                                      .bold,
-                              letterSpacing:
-                                  1,
-                            ),
-                          ),
+                          onPressed: isVerifying ? null : verifyOtp,
+                          child: isVerifying
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  "VERIFIKASI",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
                         ),
                       ),
 
@@ -259,24 +341,40 @@ class _OtpScreenState extends State<OtpScreen> {
 
   /// ================= OTP BOX =================
   Widget otpBox(
-      TextEditingController
-          controller) {
+    TextEditingController controller,
+    FocusNode focusNode, {
+    FocusNode? nextFocus,
+  }) {
     return SizedBox(
-      width: 58,
-      height: 65,
-
+      width: 45,
+      height: 60,
       child: TextField(
         controller: controller,
-        keyboardType:
-            TextInputType.number,
-        textAlign:
-            TextAlign.center,
+        focusNode: focusNode,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
         maxLength: 1,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            if (nextFocus != null) {
+              FocusScope.of(context).requestFocus(nextFocus);
+            } else {
+              focusNode.unfocus();
+            }
+          }
 
+          if (otp1.text.isNotEmpty &&
+              otp2.text.isNotEmpty &&
+              otp3.text.isNotEmpty &&
+              otp4.text.isNotEmpty &&
+              otp5.text.isNotEmpty &&
+              otp6.text.isNotEmpty) {
+            verifyOtp();
+          }
+        },
         style: const TextStyle(
           fontSize: 24,
-          fontWeight:
-              FontWeight.bold,
+          fontWeight: FontWeight.bold,
         ),
 
         decoration: InputDecoration(

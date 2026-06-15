@@ -1,9 +1,80 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../routes/app_routes.dart';
+import '../services/auth_service.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
+
+  Future<void> loginUser() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Email dan password tidak boleh kosong',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final result = await AuthService.login(
+        email: email,
+        password: password,
+      );
+
+      if (result['status'] == 200) {
+        final message = result['data']['msg'] ?? 'Login berhasil';
+        Get.snackbar(
+          'Sukses',
+          message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        Get.offNamed(AppRoutes.home);
+      } else {
+        final error = result['data']?['msg'] ?? 'Login gagal';
+        Get.snackbar(
+          'Error',
+          error,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (_) {
+      Get.snackbar(
+        'Error',
+        'Gagal menghubungkan ke server',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +99,6 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
-                /// TITLE
                 const Text(
                   "RUNTRACK",
                   style: TextStyle(
@@ -38,9 +107,7 @@ class LoginScreen extends StatelessWidget {
                     fontSize: 20,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
                 const Text(
                   "Athlete Portal",
                   style: TextStyle(
@@ -48,32 +115,26 @@ class LoginScreen extends StatelessWidget {
                     fontSize: 18,
                   ),
                 ),
-
                 const SizedBox(height: 5),
-
                 const Text(
                   "Enter your credentials to continue",
                   style: TextStyle(fontSize: 12),
                 ),
-
                 const SizedBox(height: 20),
-
-                /// EMAIL
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text("EMAIL ADDRESS"),
                 ),
                 const SizedBox(height: 5),
                 TextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     hintText: "name@event.com",
                     border: OutlineInputBorder(),
                   ),
                 ),
-
                 const SizedBox(height: 15),
-
-                /// PASSWORD
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
@@ -84,35 +145,35 @@ class LoginScreen extends StatelessWidget {
                     )
                   ],
                 ),
-
                 const SizedBox(height: 5),
-
                 TextField(
+                  controller: passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                /// LOGIN BUTTON
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.brown,
                     ),
-                    onPressed: () {
-                      Get.offNamed(AppRoutes.home);
-                    },
-                    child: const Text("LOGIN →"),
+                    onPressed: isLoading ? null : loginUser,
+                    child: isLoading
+                        ? const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text("LOGIN →"),
                   ),
                 ),
-
                 const SizedBox(height: 15),
-
-                /// SIGN UP (SUDAH BISA DIKLIK)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -131,9 +192,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 10),
-
                 const Text(
                   "OFFICIAL KOTA TEGAL RACE PARTNER",
                   style: TextStyle(fontSize: 10),
