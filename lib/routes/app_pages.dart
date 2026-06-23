@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../screens/login_screen.dart';
+import '../screens/dashboard_screen.dart';
 import '../screens/register_screen.dart';
 import '../screens/runtrack_screen.dart';
 import '../home_screen.dart';
@@ -18,6 +19,7 @@ class AppPages {
   static final pages = [
     GetPage(name: AppRoutes.runtrack, page: () => const RunTrackScreen()),
     GetPage(name: AppRoutes.login, page: () => const LoginScreen()),
+    GetPage(name: AppRoutes.dashboard, page: () => const DashboardScreen()),
     GetPage(name: AppRoutes.register, page: () => const RegisterScreen()),
     GetPage(name: AppRoutes.otpVerification, page: () => OtpScreen(email: Get.arguments as String)),
     GetPage(name: AppRoutes.home, page: () => const HomeScreen()),

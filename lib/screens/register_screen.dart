@@ -23,6 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isLoading = false;
   String? selectedGender;
   DateTime? selectedBirthDate;
+  int selectedRole = 1;
 
 
   Future<void> registerUser() async {
@@ -68,9 +69,14 @@ final result = await AuthService.register(
   nohp: phoneController.text,
   alamat: addressController.text,
   tglLahir: birthDateController.text,
+  role: selectedRole,
 );
-if (result["status"] == 201) {
 
+if (!mounted) {
+  return;
+}
+
+if (result["status"] == 201) {
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -79,9 +85,7 @@ if (result["status"] == 201) {
       ),
     ),
   );
-
 } else {
-
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(
@@ -89,7 +93,6 @@ if (result["status"] == 201) {
       ),
     ),
   );
-
 }
 setState(() {
   isLoading = false;
@@ -169,6 +172,40 @@ setState(() {
                 readOnly: true,
                 onTap: pickBirthDate,
               ),
+              const Text(
+                "DAFTAR SEBAGAI",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 5),
+              DropdownButtonFormField<int>(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color(0xFFEFEFEF),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                initialValue: selectedRole,
+                items: const [
+                  DropdownMenuItem(
+                    value: 1,
+                    child: Text("User"),
+                  ),
+                  DropdownMenuItem(
+                    value: 2,
+                    child: Text("EO"),
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    selectedRole = value ?? 1;
+                  });
+                },
+              ),
+              const SizedBox(height: 14),
               buildInput(
                 "PASSWORD",
                 "******",
@@ -198,7 +235,7 @@ setState(() {
                     borderSide: BorderSide.none,
                   ),
                 ),
-                value: selectedGender,
+                initialValue: selectedGender,
                 hint: const Text(
                   "Pilih Jenis Kelamin",
                 ),

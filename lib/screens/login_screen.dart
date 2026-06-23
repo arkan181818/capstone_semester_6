@@ -14,6 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
+  int selectedRole = 1;
 
   Future<void> loginUser() async {
     final email = emailController.text.trim();
@@ -36,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final result = await AuthService.login(
         email: email,
         password: password,
+        role: selectedRole,
       );
 
       if (result['status'] == 200) {
@@ -45,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           message,
           snackPosition: SnackPosition.BOTTOM,
         );
-        Get.offNamed(AppRoutes.home);
+        Get.offAllNamed(AppRoutes.dashboard);
       } else {
         final error = result['data']?['msg'] ?? 'Login gagal';
         Get.snackbar(
@@ -92,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
             margin: const EdgeInsets.all(20),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.9),
+              color: const Color(0xE6FFFFFF),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Colors.orange),
             ),
@@ -152,6 +154,33 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),
+                ),
+                const SizedBox(height: 15),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("LOGIN SEBAGAI"),
+                ),
+                const SizedBox(height: 5),
+                DropdownButtonFormField<int>(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  initialValue: selectedRole,
+                  items: const [
+                    DropdownMenuItem(
+                      value: 1,
+                      child: Text("User"),
+                    ),
+                    DropdownMenuItem(
+                      value: 2,
+                      child: Text("EO"),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedRole = value ?? 1;
+                    });
+                  },
                 ),
                 const SizedBox(height: 20),
                 SizedBox(

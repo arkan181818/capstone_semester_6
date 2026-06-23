@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
 
 import '../services/profile_service.dart';
 
@@ -43,7 +44,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Get.back(),
         ),
         title: const Text(
           "Edit Profil",
@@ -220,7 +221,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             // Tombol Batal
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
               },
               child: const Text(
                 "Batal",
@@ -383,7 +384,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             content: Text(data['msg'] ?? 'Profil berhasil diperbarui'),
           ),
         );
-        Navigator.pop(context);
+        Get.back(result: true);
       } else {
         final message = data['msg'] ?? 'Gagal memperbarui profil';
         ScaffoldMessenger.of(context).showSnackBar(

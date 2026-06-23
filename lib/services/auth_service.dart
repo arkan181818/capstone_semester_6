@@ -14,6 +14,7 @@ class AuthService {
   required String nohp,
   required String alamat,
   required String tglLahir,
+  required int role,
 }) async {
 
   final response = await http.post(
@@ -32,6 +33,7 @@ class AuthService {
       "nohp": nohp,
       "alamat": alamat,
       "tgl_lahir": tglLahir,
+      "role": role,
     }),
   );
 
@@ -74,6 +76,7 @@ static Future<Map<String, dynamic>>
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,
+    required int role,
   }) async {
     final response = await http.post(
       Uri.parse(
@@ -85,6 +88,7 @@ static Future<Map<String, dynamic>>
       body: jsonEncode({
         "email": email,
         "password": password,
+        "role": role,
       }),
     );
 
