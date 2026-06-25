@@ -9,6 +9,8 @@ import '../event_list_screen.dart';
 import '../detail_event_screen.dart';
 import '../payment_screen.dart';
 import '../scanner_screen.dart';
+import '../screens/eo_event_form_screen.dart';
+import '../screens/eo_event_list_screen.dart';
 import '../screens/edit_profile_screen.dart';
 import '../profile_screen.dart';
 import '../riwayat_screen.dart';
@@ -29,6 +31,8 @@ class AppPages {
     GetPage(name: AppRoutes.scanner, page: () => const ScannerScreen()),
     GetPage(name: AppRoutes.profile, page: () => const ProfileScreen()),
     GetPage(name: AppRoutes.editProfile, page: () => const EditProfilePage()),
+    GetPage(name: AppRoutes.eoEventList, page: () => const EOEventListScreen()),
+    GetPage(name: AppRoutes.eoEventForm, page: () => const EOEventFormScreen()),
     GetPage(name: AppRoutes.riwayat, page: () => const RiwayatScreen()),
     GetPage(name: AppRoutes.notification, page: () => const NotificationScreen()),
   ];

@@ -16,11 +16,11 @@ class DetailEventScreen extends StatelessWidget {
   });
 
   factory DetailEventScreen.fromArgs() {
-    final args = Get.arguments as Map<String, String>? ?? {};
+    final args = Get.arguments as Map<String, dynamic>? ?? {};
     return DetailEventScreen(
-      image: args['image'] ?? 'assets/images/event1.png',
-      title: args['title'] ?? 'RunTrack Event',
-      price: args['price'] ?? 'Rp 0',
+      image: args['image']?.toString() ?? 'assets/images/event1.png',
+      title: args['title']?.toString() ?? 'RunTrack Event',
+      price: args['price']?.toString() ?? 'Rp 0',
     );
   }
 

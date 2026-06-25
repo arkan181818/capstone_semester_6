@@ -1,3 +1,4 @@
+import 'package:capstone/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/bottom_nav_controller.dart';
@@ -28,11 +29,14 @@ class HomeScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.only(right: 15),
-            child: CircleAvatar(
-              backgroundImage: AssetImage('assets/images/profile.png'),
+            padding: const EdgeInsets.only(right: 15),
+            child: GestureDetector(
+              onTap: () => Get.toNamed('/profile'),
+              child: const CircleAvatar(
+                backgroundImage: AssetImage('assets/images/profile.png'),
+              ),
             ),
           ),
         ],
@@ -187,19 +191,14 @@ class HomeScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 children: const [
                   EventCard(
-                    image:
-                        "assets/images/event1.png",
-                    title: "BSI Runfest",
-                    price: "Rp 150.000",
+                    image: "assets/images/event1.png",
+                    title: "RunTrack City Run 2026",
+                    price: "Rp 175.000",
                   ),
-
                   EventCard(
-                    image:
-                        "assets/images/event2.png",
-                    title:
-                        "Tegal Fun Run",
-                    price:
-                        "Rp 200.000",
+                    image: "assets/images/event2.png",
+                    title: "Borobudur 10K Run",
+                    price: "Rp 200.000",
                   ),
                 ],
               ),

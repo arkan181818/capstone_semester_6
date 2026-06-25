@@ -4,6 +4,7 @@ import '../widgets/dashboard_stat_card.dart';
 import '../widgets/dashboard_chart.dart';
 import '../widgets/dashboard_event_card.dart';
 import '../widgets/dashboard_registration_card.dart';
+import '../routes/app_routes.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -38,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 15),
             child: GestureDetector(
               onTap: () {
-                Get.toNamed('/profile');
+                Get.toNamed(AppRoutes.profile);
               },
               child: const CircleAvatar(
                 backgroundImage: AssetImage('assets/images/profile.png'),
@@ -80,7 +81,9 @@ class DashboardScreen extends StatelessWidget {
               width: double.infinity,
               height: 50,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed(AppRoutes.eoEventForm);
+                },
                 icon: const Icon(Icons.add_circle_outline),
                 label: const Text('Create New Event'),
                 style: ElevatedButton.styleFrom(
@@ -269,7 +272,9 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.eoEventList);
+                  },
                   child: const Text(
                     'View All',
                     style: TextStyle(

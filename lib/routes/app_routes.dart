@@ -11,6 +11,8 @@ abstract class AppRoutes {
   static const scanner = '/scanner';
   static const profile = '/profile';
   static const editProfile = '/edit-profile';
+  static const eoEventList = '/eo-event-list';
+  static const eoEventForm = '/eo-event-form';
   static const riwayat = '/riwayat';
   static const notification = '/notification';
 }

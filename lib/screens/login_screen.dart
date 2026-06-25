@@ -42,12 +42,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (result['status'] == 200) {
         final message = result['data']['msg'] ?? 'Login berhasil';
+        final data = result['data'];
+        final int role = (data is Map<String, dynamic> && data['role'] is int)
+            ? data['role'] as int
+            : selectedRole;
+
         Get.snackbar(
           'Sukses',
           message,
           snackPosition: SnackPosition.BOTTOM,
         );
-        Get.offAllNamed(AppRoutes.dashboard);
+
+        if (role == 2) {
+          Get.offAllNamed(AppRoutes.dashboard);
+        } else {
+          Get.offAllNamed(AppRoutes.home);
+        }
       } else {
         final error = result['data']?['msg'] ?? 'Login gagal';
         Get.snackbar(
