@@ -5,12 +5,14 @@ import '../widgets/dashboard_chart.dart';
 import '../widgets/dashboard_event_card.dart';
 import '../widgets/dashboard_registration_card.dart';
 import '../routes/app_routes.dart';
+import '../controllers/dashboard_controller.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(DashboardController());
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -105,34 +107,34 @@ class DashboardScreen extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                DashboardStatCard(
-                  icon: Icons.event,
-                  title: 'TOTAL EVENT',
-                  value: '42',
-                  change: '+4 this month',
-                  changeColor: Colors.green,
-                ),
-                DashboardStatCard(
-                  icon: Icons.people,
-                  title: 'TOTAL PESERTA',
-                  value: '8,241',
-                  change: '+12% vs last week',
-                  changeColor: Colors.green,
-                ),
-                DashboardStatCard(
-                  icon: Icons.attach_money,
-                  title: 'TOTAL PENDAPATAN',
-                  value: 'Rp 1.2M',
-                  change: 'Record high',
-                  changeColor: Colors.orange,
-                ),
-                DashboardStatCard(
-                  icon: Icons.trending_up,
-                  title: 'CONVERSION RATE',
-                  value: '68%',
-                  change: '+5% this month',
-                  changeColor: Colors.green,
-                ),
+                Obx(() => DashboardStatCard(
+                      icon: Icons.event,
+                      title: 'TOTAL EVENT',
+                      value: controller.totalEvents.toString(),
+                      change: '+',
+                      changeColor: Colors.green,
+                    )),
+                Obx(() => DashboardStatCard(
+                      icon: Icons.people,
+                      title: 'TOTAL PESERTA',
+                      value: controller.totalParticipants.toString(),
+                      change: '-',
+                      changeColor: Colors.green,
+                    )),
+                Obx(() => DashboardStatCard(
+                      icon: Icons.attach_money,
+                      title: 'TOTAL PENDAPATAN',
+                      value: controller.totalRevenue.value,
+                      change: '-',
+                      changeColor: Colors.orange,
+                    )),
+                Obx(() => DashboardStatCard(
+                      icon: Icons.trending_up,
+                      title: 'LIVE EVENTS',
+                      value: controller.liveEvents.toString(),
+                      change: '+',
+                      changeColor: Colors.green,
+                    )),
               ],
             ),
             const SizedBox(height: 30),
@@ -172,7 +174,7 @@ class DashboardScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       const Text(
                         'EVENT AKTIF',
                         style: TextStyle(
@@ -182,14 +184,14 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        '8',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Obx(() => Text(
+                            controller.liveEvents.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
                     ],
                   ),
                   Container(
@@ -286,29 +288,47 @@ class DashboardScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
-            DashboardEventCard(
-              day: '28',
-              month: 'NOV',
-              title: 'Jakarta City Marathon 2023',
-              location: 'GBK, Jakarta',
-              icon: Icons.location_on,
-            ),
-            const SizedBox(height: 12),
-            DashboardEventCard(
-              day: '05',
-              month: 'DES',
-              title: 'Borobudur 10K Run',
-              location: 'Magelang, Jawa Tengah',
-              icon: Icons.location_on,
-            ),
-            const SizedBox(height: 12),
-            DashboardEventCard(
-              day: '12',
-              month: 'DES',
-              title: 'Sunset Beach Run',
-              location: 'Bali, Indonesia',
-              icon: Icons.location_on,
-            ),
+            Obx(() {
+              final events = controller.events;
+              if (events.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text('No upcoming events'),
+                );
+              }
+              final months = [
+                'JAN',
+                'FEB',
+                'MAR',
+                'APR',
+                'MAY',
+                'JUN',
+                'JUL',
+                'AUG',
+                'SEP',
+                'OCT',
+                'NOV',
+                'DES'
+              ];
+              return Column(
+                children: events.take(3).map((e) {
+                  final day = e.tanggal.day.toString().padLeft(2, '0');
+                  final month = months[e.tanggal.month - 1];
+                  return Column(
+                    children: [
+                      DashboardEventCard(
+                        day: day,
+                        month: month,
+                        title: e.namaEvent,
+                        location: e.lokasi,
+                        icon: Icons.location_on,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                  );
+                }).toList(),
+              );
+            }),
             const SizedBox(height: 30),
 
             /// PENDAFTARAN TERBARU SECTION
@@ -373,12 +393,11 @@ class DashboardScreen extends StatelessWidget {
             ),
 
             /// TABLE ROWS
-            DashboardRegistrationCard(
-                participant: 'AS', name: 'Andi Saputra', email: 'andi.saputra@gmail.com', event: 'Jakarta Marathon'),
-            DashboardRegistrationCard(
-                participant: 'IW', name: 'Rina Wijaya', email: 'rina.wijaya@gmail.com', event: 'Borobudur 10K Run'),
-            DashboardRegistrationCard(
-                participant: 'DP', name: 'Devi Pratama', email: 'devi.pratama@gmail.com', event: 'Sunset Beach Run'),
+            // Registration data not available from current API; show placeholder
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: const Text('Registration data not available'),
+            ),
             
             const SizedBox(height: 30),
 

@@ -48,6 +48,76 @@ class EventService {
     }).toList();
   }
 
+  // User endpoints
+  static Future<List<EventModel>> getUserEvents() async {
+    final token = AuthService.accessToken;
+
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+
+    final response = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/event/list'),
+      headers: headers,
+    );
+
+    dynamic body;
+    try {
+      body = jsonDecode(response.body);
+    } catch (_) {
+      body = {
+        'msg': response.body,
+      };
+    }
+
+    if (response.statusCode != 200) {
+      final message = (body is Map && body['msg'] != null) ? body['msg'] : 'Gagal memuat event';
+      throw Exception(message);
+    }
+
+    final items = body is List ? body : (body['data'] is List ? body['data'] : []);
+    return (items as List<dynamic>).map((item) {
+      final map = item as Map<String, dynamic>;
+      final banner = map['banner'] as String?;
+      return EventModel.fromJson({
+        ...map,
+        'banner': banner != null && banner.isNotEmpty ? '${ApiConfig.baseUrl}/$banner' : null,
+      });
+    }).toList();
+  }
+
+  static Future<EventModel> getEventDetail(int eventId) async {
+    final token = AuthService.accessToken;
+
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+
+    final response = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/event/detail/$eventId'),
+      headers: headers,
+    );
+
+    final body = jsonDecode(response.body);
+    if (response.statusCode != 200) {
+      final message = body['msg'] ?? 'Gagal memuat detail event';
+      throw Exception(message);
+    }
+
+    final map = body is Map<String, dynamic> ? body : (body['data'] as Map<String, dynamic>);
+    final banner = map['banner'] as String?;
+    return EventModel.fromJson({
+      ...map,
+      'banner': banner != null && banner.isNotEmpty ? '${ApiConfig.baseUrl}/$banner' : null,
+    });
+  }
+
   static Future<Map<String, dynamic>> createEvent({
     required int categoryId,
     required String namaEvent,

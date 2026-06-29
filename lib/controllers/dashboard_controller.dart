@@ -1,26 +1,45 @@
 import 'package:get/get.dart';
 
+import '../models/event_model.dart';
+import '../services/event_service.dart';
+
 class DashboardController extends GetxController {
-  final totalEvents = 42.obs;
-  final totalParticipants = 8241.obs;
-  final totalRevenue = 'Rp 1.2M'.obs;
-  final liveEvents = 8.obs;
+  final totalEvents = 0.obs;
+  final totalParticipants = 0.obs;
+  final totalRevenue = 'Rp 0'.obs;
+  final liveEvents = 0.obs;
+
+  final events = <EventModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Initialize dashboard data
+    loadData();
   }
 
-  void createNewEvent() {
-    // Handle create event action
+  Future<void> loadData() async {
+    try {
+      final list = await EventService.getEOEvents();
+      events.assignAll(list);
+      totalEvents.value = list.length;
+      liveEvents.value = list.where((e) {
+        final s = e.status.toLowerCase();
+        return s.contains('live') || s.contains('active') || s.contains('ongoing');
+      }).length;
+
+      // totalParticipants and totalRevenue are not provided by current API.
+      // Keep them as zero or compute if you add an endpoint for registrations/revenue.
+    } catch (err) {
+      // ignore errors for now; you may show a toast or set error state
+      events.clear();
+      totalEvents.value = 0;
+      liveEvents.value = 0;
+    }
   }
 
-  void viewAllEvents() {
-    // Handle view all events
-  }
+  void createNewEvent() {}
 
-  void exportData() {
-    // Handle export data
-  }
+  void viewAllEvents() {}
+
+  void exportData() {}
 }

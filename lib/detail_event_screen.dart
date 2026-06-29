@@ -149,12 +149,24 @@ class DetailEventScreen extends StatelessWidget {
                             top: Radius.circular(20),
                           ),
 
-                          child: Image.asset(
-                            image,
-                            height: 200,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
+                          child: image.startsWith('http')
+                              ? Image.network(
+                                  image,
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => Container(
+                                    height: 200,
+                                    color: Colors.grey[200],
+                                    child: const Center(child: Icon(Icons.broken_image)),
+                                  ),
+                                )
+                              : Image.asset(
+                                  image,
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
 
                         Positioned(

@@ -6,6 +6,8 @@ import '../widgets/app_bottom_nav.dart';
 import 'riwayat_screen.dart';
 import 'detail_event_screen.dart';
 import 'event_list_screen.dart';
+import '../models/event_model.dart';
+import '../services/event_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -184,23 +186,38 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 15),
 
-            /// EVENT LIST
+            /// EVENT LIST (dari backend)
             SizedBox(
-              height: 240,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: const [
-                  EventCard(
-                    image: "assets/images/event1.png",
-                    title: "RunTrack City Run 2026",
-                    price: "Rp 175.000",
-                  ),
-                  EventCard(
-                    image: "assets/images/event2.png",
-                    title: "Borobudur 10K Run",
-                    price: "Rp 200.000",
-                  ),
-                ],
+              height: 260,
+              child: FutureBuilder<List<EventModel>>(
+                future: EventService.getUserEvents(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text('Error: ${snapshot.error}'),
+                    ));
+                  }
+                  final events = snapshot.data ?? [];
+                  if (events.isEmpty) {
+                    return const Center(child: Text('Tidak ada event saat ini'));
+                  }
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      final e = events[index];
+                      return EventCard(
+                        image: e.bannerUrl ?? 'assets/images/event1.png',
+                        title: e.namaEvent,
+                        price: e.harga.isNotEmpty ? 'Rp ${e.harga}' : 'Gratis',
+                      );
+                    },
+                  );
+                },
               ),
             ),
 
@@ -314,12 +331,24 @@ class EventCard extends StatelessWidget {
                 top: Radius.circular(20),
               ),
 
-              child: Image.asset(
-                image,
-                height: 140,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              child: image.startsWith('http')
+                  ? Image.network(
+                      image,
+                      height: 140,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 140,
+                        color: Colors.grey[200],
+                        child: const Center(child: Icon(Icons.broken_image)),
+                      ),
+                    )
+                  : Image.asset(
+                      image,
+                      height: 140,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
             ),
 
             Padding(
