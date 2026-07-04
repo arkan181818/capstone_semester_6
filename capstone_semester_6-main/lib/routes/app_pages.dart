@@ -8,6 +8,8 @@ import '../screens/otp_verification_screen.dart';
 import '../event_list_screen.dart';
 import '../detail_event_screen.dart';
 import '../payment_screen.dart';
+import '../screens/event_registration_screen.dart';
+import '../screens/payment_upload_screen.dart';
 import '../scanner_screen.dart';
 import '../screens/eo_event_form_screen.dart';
 import '../screens/eo_event_list_screen.dart';
@@ -27,7 +29,9 @@ class AppPages {
     GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
     GetPage(name: AppRoutes.eventList, page: () => const EventListScreen()),
     GetPage(name: AppRoutes.detailEvent, page: () => DetailEventScreen.fromArgs()),
+    GetPage(name: AppRoutes.eventRegistration, page: () => EventRegistrationScreen.fromArgs()),
     GetPage(name: AppRoutes.payment, page: () => const PaymentScreen()),
+    GetPage(name: AppRoutes.paymentUpload, page: () => PaymentUploadScreen.fromArgs()),
     GetPage(name: AppRoutes.scanner, page: () => const ScannerScreen()),
     GetPage(name: AppRoutes.profile, page: () => const ProfileScreen()),
     GetPage(name: AppRoutes.editProfile, page: () => const EditProfilePage()),

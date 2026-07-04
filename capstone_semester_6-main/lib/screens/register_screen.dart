@@ -86,11 +86,10 @@ if (result["status"] == 201) {
     ),
   );
 } else {
+  final message = AuthService.buildErrorMessage(result["data"] ?? {});
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(
-        result["data"]["msg"],
-      ),
+      content: Text(message),
     ),
   );
 }

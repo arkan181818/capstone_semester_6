@@ -399,14 +399,15 @@ class DetailEventScreen extends StatelessWidget {
                                 ),
 
                                 onPressed: () {
+                                  // Navigate to event registration form
                                   Get.toNamed(
-                                    AppRoutes.payment,
+                                    AppRoutes.eventRegistration,
                                     arguments: {
-                                      'title': title,
-                                      'price': price,
-                                      'date': '30 Agustus 2026',
-                                      'location': 'Alun-Alun Kota Tegal',
-                                      'category': '10K Competitive Category',
+                                      'eventId': 1, // Will be passed from event list
+                                      'eventTitle': title,
+                                      'eventPrice': price,
+                                      'token': '', // Will be retrieved from storage
+                                      'userId': 0, // Will be retrieved from storage
                                     },
                                   );
                                 },
