@@ -1,10 +1,25 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 
 import '../config/api_config.dart';
 
 class AuthService {
   static String? accessToken;
+
+  static String normalizeUsername(String value) {
+    return value.trim().toLowerCase();
+  }
+
+  static String buildErrorMessage(Map<String, dynamic> data) {
+    final msg = data['msg']?.toString() ?? '';
+
+    if (msg.contains('Duplicate entry') || msg.contains('username')) {
+      return 'Username sudah dipakai. Silakan pilih username lain.';
+    }
+
+    return msg.isNotEmpty ? msg : 'Registrasi gagal.';
+  }
 
   static Future<Map<String, dynamic>> register({
   required String nama,
