@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../routes/app_routes.dart';
 import '../controllers/bottom_nav_controller.dart';
 import '../widgets/app_bottom_nav.dart';
-import 'bahari_run_detail_screen.dart';
+import '../models/event_model.dart';
+import '../services/event_service.dart';
+import 'detail_event_screen.dart';
 
 class EventListScreen extends StatelessWidget {
   const EventListScreen({super.key});
@@ -129,227 +130,141 @@ class EventListScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               /// EVENT CARD
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.detailEvent, arguments: {
-                    'image': "assets/images/event1.png",
-                    'title': "RunTrack City Run 2026",
-                    'price': "Rp 175.000",
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 6,
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                            child: Image.asset(
-                              "assets/images/event1.png",
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.lightGreen,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const Text(
-                                "Live Soon",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+              FutureBuilder<List<EventModel>>(
+                future: EventService.getUserEvents(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text('Error: ${snapshot.error}'),
                       ),
-
-                      Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "RunTrack City Run 2026",
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            infoRow(Icons.calendar_today, "10 Juli 2026"),
-                            infoRow(Icons.access_time, "06:00 WIB"),
-                            infoRow(Icons.location_on, "Kota Tegal, Central Java"),
-
-                            const SizedBox(height: 10),
-
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                chip("5K Beginner"),
-                                chip("10K Competitive"),
-                                chip("Half Marathon"),
-                              ],
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text("750 / 1.000 peserta"),
-                                Text(
-                                  "75%",
-                                  style: TextStyle(
-                                    color: Colors.green[700],
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ],
-                            ),
-
-                            const SizedBox(height: 8),
-
-                            LinearProgressIndicator(
-                              value: 0.75,
-                              minHeight: 6,
-                              color: Colors.lightGreen,
-                              backgroundColor: Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
-                                    Text(
-                                      "Mulai dari",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      "Rp 175.000",
-                                      style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff5b7300),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xff5b7300),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 25,
-                                      vertical: 15,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => BahariRunDetailScreen(),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Daftar",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.black87,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: const Row(
+                    );
+                  }
+                  final events = snapshot.data ?? [];
+                  if (events.isEmpty) {
+                    return const Center(child: Text('Tidak ada event saat ini'));
+                  }
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      final event = events[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(() => DetailEventScreen(
+                                eventId: event.id,
+                                image: event.bannerUrl ?? 'assets/images/event1.png',
+                                title: event.namaEvent,
+                                price: event.harga.isNotEmpty ? 'Rp ${event.harga}' : 'Gratis',
+                              ));
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 6,
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
                                 children: [
-                                  CircleAvatar(
-                                    backgroundImage: AssetImage(
-                                      "assets/images/event1.png",
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(20),
                                     ),
+                                    child: event.bannerUrl != null
+                                        ? Image.network(
+                                            event.bannerUrl!,
+                                            height: 200,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => Container(
+                                              height: 200,
+                                              color: Colors.grey[200],
+                                              child: const Center(child: Icon(Icons.broken_image)),
+                                            ),
+                                          )
+                                        : Image.asset(
+                                            'assets/images/event1.png',
+                                            height: 200,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
                                   ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      "Siap berlari lagi? Halo, Runner!",
-                                      style: TextStyle(
-                                        color: Colors.white,
+                                  Positioned(
+                                    top: 10,
+                                    right: 10,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5,
                                       ),
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        "Total Jarak",
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 11,
-                                        ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.lightGreen,
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        "124.5 km",
+                                      child: const Text(
+                                        'Live Soon',
                                         style: TextStyle(
                                           color: Colors.white,
+                                          fontSize: 11,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   )
                                 ],
                               ),
-                            )
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.all(14),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      event.namaEvent,
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    infoRow(Icons.calendar_today, event.tanggal.toLocal().toString().split(' ').first),
+                                    infoRow(Icons.access_time, '06:00 WIB'),
+                                    infoRow(Icons.location_on, event.lokasi),
+                                    const SizedBox(height: 10),
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: [
+                                        chip('10K Competitive'),
+                                        chip('5K Fun Run'),
+                                        chip('Half Marathon'),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              )
+                      );
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),

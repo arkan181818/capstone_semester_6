@@ -14,8 +14,9 @@ class ProfileService {
       throw Exception('Token tidak tersedia. Silakan login ulang.');
     }
 
+    // Use the /me endpoint which returns profile + payment verification/bib info
     final response = await http.get(
-      Uri.parse('${ApiConfig.baseUrl}/profile'),
+      Uri.parse('${ApiConfig.baseUrl}/me'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -29,6 +30,7 @@ class ProfileService {
       throw Exception(message);
     }
 
+    // The /me endpoint is expected to return a JSON object representing the user.
     return ProfileModel.fromJson(body as Map<String, dynamic>);
   }
 

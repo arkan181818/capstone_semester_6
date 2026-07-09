@@ -15,6 +15,8 @@ import '../screens/edit_profile_screen.dart';
 import '../profile_screen.dart';
 import '../riwayat_screen.dart';
 import '../notification_screen.dart';
+import '../screens/scan_history_screen.dart';
+import '../screens/face_scan_simulation_screen.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -35,5 +37,7 @@ class AppPages {
     GetPage(name: AppRoutes.eoEventForm, page: () => const EOEventFormScreen()),
     GetPage(name: AppRoutes.riwayat, page: () => const RiwayatScreen()),
     GetPage(name: AppRoutes.notification, page: () => const NotificationScreen()),
+    GetPage(name: AppRoutes.riwayatScan, page: () => const ScanHistoryScreen()),
+    GetPage(name: AppRoutes.faceScan, page: () => const FaceScanSimulationScreen()),
   ];
 }

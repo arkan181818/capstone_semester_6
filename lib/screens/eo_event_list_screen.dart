@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../models/event_model.dart';
 import '../services/event_service.dart';
 import '../routes/app_routes.dart';
+import '../widgets/eo_bottom_nav.dart';
 
 class EOEventListScreen extends StatefulWidget {
   const EOEventListScreen({super.key});
@@ -214,6 +215,7 @@ class _EOEventListScreenState extends State<EOEventListScreen> {
         },
         child: const Icon(Icons.add),
       ),
+      bottomNavigationBar: EOBottomNav(),
     );
   }
 }

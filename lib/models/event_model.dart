@@ -8,6 +8,9 @@ class EventModel {
   final String status;
   final String harga;
   final int kuota;
+  final int? totalPeserta;
+  final String? fasilitasPeserta;
+  final String? mapsUrl;
 
   EventModel({
     required this.id,
@@ -19,6 +22,9 @@ class EventModel {
     required this.status,
     required this.harga,
     required this.kuota,
+    this.totalPeserta,
+    this.fasilitasPeserta,
+    this.mapsUrl,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +46,9 @@ class EventModel {
       status: json['status'] as String? ?? '',
       harga: json['harga']?.toString() ?? '',
       kuota: json['kuota'] is int ? json['kuota'] as int : int.tryParse(json['kuota']?.toString() ?? '') ?? 0,
+      totalPeserta: json['total_peserta'] is int ? json['total_peserta'] as int : int.tryParse(json['total_peserta']?.toString() ?? '') ?? 0,
+      fasilitasPeserta: json['fasilitas_peserta'] as String?,
+      mapsUrl: json['maps_url'] as String?,
     );
   }
 
@@ -54,6 +63,9 @@ class EventModel {
       'status': status,
       'harga': harga,
       'kuota': kuota,
+      'total_peserta': totalPeserta,
+      'fasilitas_peserta': fasilitasPeserta,
+      'maps_url': mapsUrl,
     };
   }
 }

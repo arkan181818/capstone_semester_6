@@ -1,4 +1,3 @@
-import 'package:capstone/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/bottom_nav_controller.dart';
@@ -8,15 +7,29 @@ import 'detail_event_screen.dart';
 import 'event_list_screen.dart';
 import '../models/event_model.dart';
 import '../services/event_service.dart';
+import 'models/profile_model.dart';
+import 'services/profile_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<ProfileModel> profileFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    profileFuture = ProfileService.fetchProfile();
     final controller = Get.put(BottomNavController());
     controller.setIndex(0);
-    
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
 
@@ -36,8 +49,22 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 15),
             child: GestureDetector(
               onTap: () => Get.toNamed('/profile'),
-              child: const CircleAvatar(
-                backgroundImage: AssetImage('assets/images/profile.png'),
+              child: FutureBuilder<ProfileModel>(
+                future: profileFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final profile = snapshot.data!;
+                    final imageUrl = profile.imageUrl;
+                    if (imageUrl.isNotEmpty) {
+                      return CircleAvatar(
+                        backgroundImage: NetworkImage(imageUrl),
+                      );
+                    }
+                  }
+                  return const CircleAvatar(
+                    backgroundImage: AssetImage('assets/images/profile.png'),
+                  );
+                },
               ),
             ),
           ),
@@ -114,6 +141,7 @@ class HomeScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       Get.to(() => DetailEventScreen(
+                            eventId: 1,
                             image: "assets/images/event1.png",
                             title: "BSI Runfest",
                             price: "Rp 150.000",
@@ -211,6 +239,7 @@ class HomeScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final e = events[index];
                       return EventCard(
+                        eventId: e.id,
                         image: e.bannerUrl ?? 'assets/images/event1.png',
                         title: e.namaEvent,
                         price: e.harga.isNotEmpty ? 'Rp ${e.harga}' : 'Gratis',
@@ -277,12 +306,14 @@ class MenuItem extends StatelessWidget {
 
 /// ================= EVENT CARD =================
 class EventCard extends StatelessWidget {
+  final int eventId;
   final String image;
   final String title;
   final String price;
 
   const EventCard({
     super.key,
+    required this.eventId,
     required this.image,
     required this.title,
     required this.price,
@@ -294,6 +325,7 @@ class EventCard extends StatelessWidget {
       /// KLIK CARD
       onTap: () {
         Get.to(() => DetailEventScreen(
+              eventId: eventId,
               image: image,
               title: title,
               price: price,

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import '../routes/app_routes.dart';
 
-class BottomNavController extends GetxController {
+class EOBottomNavController extends GetxController {
   RxInt currentIndex = 0.obs;
 
   @override
@@ -17,12 +17,14 @@ class BottomNavController extends GetxController {
   void updateIndexBasedOnRoute() {
     String? currentRoute = Get.currentRoute;
     
-    if (currentRoute == AppRoutes.home) {
+    if (currentRoute == AppRoutes.dashboard) {
       currentIndex.value = 0;
-    } else if (currentRoute == AppRoutes.eventList) {
+    } else if (currentRoute == AppRoutes.eoEventList) {
       currentIndex.value = 1;
-    } else if (currentRoute == AppRoutes.profile) {
+    } else if (currentRoute == AppRoutes.scanner) {
       currentIndex.value = 2;
+    } else if (currentRoute == AppRoutes.riwayatScan) {
+      currentIndex.value = 3;
     }
   }
 }

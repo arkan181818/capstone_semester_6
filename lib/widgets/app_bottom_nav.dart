@@ -28,13 +28,8 @@ class AppBottomNav extends StatelessWidget {
             Get.toNamed(AppRoutes.eventList);
           }
 
-          /// SCANNER
-          if (index == 2) {
-            Get.toNamed(AppRoutes.scanner);
-          }
-
           /// PROFILE
-          if (index == 3) {
+          if (index == 2) {
             Get.toNamed(AppRoutes.profile);
           }
         },
@@ -46,10 +41,6 @@ class AppBottomNav extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.event),
             label: "Event",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.qr_code_scanner),
-            label: "Scan",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

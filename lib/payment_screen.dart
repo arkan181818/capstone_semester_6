@@ -1,22 +1,37 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-class PaymentScreen extends StatelessWidget {
+import 'routes/app_routes.dart';
+import 'services/event_service.dart';
+
+class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
 
-  factory PaymentScreen.fromArgs() {
-    final args = Get.arguments as Map<String, String>? ?? {};
-    return const PaymentScreen();
-  }
+  @override
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends State<PaymentScreen> {
+  final ImagePicker _picker = ImagePicker();
+  Uint8List? proofBytes;
+  String? proofFileName;
+  bool isUploading = false;
 
   @override
   Widget build(BuildContext context) {
-    final args = Get.arguments as Map<String, String>?;
+    final args = Get.arguments as Map<String, dynamic>?;
+    final registrationId = args?['registration_id'];
     final title = args?['title'] ?? 'MC RUN 2026';
     final category = args?['category'] ?? '10K Competitive Category';
     final date = args?['date'] ?? '30 Agustus 2026';
     final location = args?['location'] ?? 'Alun-Alun Kota Tegal';
     final price = args?['price'] ?? 'Rp 250.000';
+    final totalPrice = args?['total_price'] ?? price;
+    final bankAccount = args?['bank_account'] ?? 'BCA 123-456-7890';
+    final accountName = args?['account_name'] ?? 'PT RunTrack Indonesia';
 
     return Scaffold(
       backgroundColor: const Color(0xfff7f4f0),
@@ -155,9 +170,9 @@ class PaymentScreen extends StatelessWidget {
                                   color: const Color(0xfff8f0e4),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Text(
-                                  'AUG 30',
-                                  style: TextStyle(
+                                child: Text(
+                                  date.split(' ').last.toUpperCase(),
+                                  style: const TextStyle(
                                     color: Colors.orange,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -227,32 +242,6 @@ class PaymentScreen extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               const Text(
-                'E-WALLET & QRIS',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              paymentMethodTile(
-                icon: Icons.qr_code,
-                title: 'QRIS',
-                subtitle: 'GoPay, OVO, Dana, LinkAja',
-              ),
-              const SizedBox(height: 10),
-              paymentMethodTile(
-                icon: Icons.account_balance_wallet_outlined,
-                title: 'GoPay',
-                subtitle: 'Bayar langsung dengan GoPay',
-              ),
-              const SizedBox(height: 10),
-              paymentMethodTile(
-                icon: Icons.payment,
-                title: 'ShopeePay',
-                subtitle: 'Bayar langsung dengan ShopeePay',
-              ),
-              const SizedBox(height: 18),
-              const Text(
                 'TRANSFER BANK & VA',
                 style: TextStyle(
                   color: Colors.black54,
@@ -265,7 +254,44 @@ class PaymentScreen extends StatelessWidget {
                 title: 'Virtual Account',
                 subtitle: 'BCA, Mandiri, BNI, BRI',
               ),
-              const SizedBox(height: 22),
+              const SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Nomor Rekening',
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      bankAccount,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      accountName,
+                      style: const TextStyle(
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -282,7 +308,75 @@ class PaymentScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     paymentSummaryRow('Promo "RUNTEGAL"', '- Rp 5.000', isPromo: true),
                     const Divider(height: 28, thickness: 1),
-                    paymentSummaryRow('Total Bayar', price, isTotal: true),
+                    paymentSummaryRow('Total Bayar', totalPrice, isTotal: true),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Unggah Bukti Pembayaran',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: _pickPaymentProof,
+                      icon: const Icon(Icons.upload_file),
+                      label: Text(
+                        proofFileName == null ? 'Pilih Foto Bukti Pembayaran' : 'Ganti File: $proofFileName',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (proofBytes != null)
+                      Container(
+                        height: 160,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: DecorationImage(
+                            image: MemoryImage(proofBytes!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: isUploading || proofBytes == null || registrationId == null ? null : () => _uploadProof(registrationId as int),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: isUploading
+                            ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : const Text(
+                                'Kirim Bukti Pembayaran',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -312,6 +406,53 @@ class PaymentScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _pickPaymentProof() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 75,
+    );
+    if (pickedFile == null) return;
+    final bytes = await pickedFile.readAsBytes();
+    setState(() {
+      proofBytes = bytes;
+      proofFileName = pickedFile.name;
+    });
+  }
+
+  Future<void> _uploadProof(int registrationId) async {
+    setState(() {
+      isUploading = true;
+    });
+
+    try {
+      final result = await EventService.uploadPaymentProof(
+        registrationId: registrationId,
+        proofBytes: proofBytes!,
+        proofName: proofFileName ?? 'bukti.jpg',
+      );
+
+      if (result['status'] == 200) {
+        Get.snackbar('Sukses', result['data']['msg']?.toString() ?? 'Bukti pembayaran dikirim.', snackPosition: SnackPosition.BOTTOM);
+        if (mounted) {
+          Future.delayed(const Duration(milliseconds: 500), () {
+            Get.offAllNamed(AppRoutes.home);
+          });
+        }
+      } else {
+        final message = result['data'] is Map<String, dynamic> ? result['data']['msg']?.toString() ?? 'Gagal mengirim bukti.' : 'Gagal mengirim bukti.';
+        Get.snackbar('Gagal', message, snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      if (mounted) {
+        setState(() {
+          isUploading = false;
+        });
+      }
+    }
   }
 
   Widget paymentMethodTile({

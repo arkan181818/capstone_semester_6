@@ -91,7 +91,6 @@ static Future<Map<String, dynamic>>
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,
-    required int role,
   }) async {
     final response = await http.post(
       Uri.parse(
@@ -103,7 +102,6 @@ static Future<Map<String, dynamic>>
       body: jsonEncode({
         "email": email,
         "password": password,
-        "role": role,
       }),
     );
 
@@ -116,5 +114,27 @@ static Future<Map<String, dynamic>>
       "status": response.statusCode,
       "data": responseBody,
     };
+  }
+
+  static Future<Map<String, dynamic>> getMe() async {
+    final token = accessToken;
+    if (token == null || token.isEmpty) return {"status": 401, "data": {"msg": "No token"}};
+
+    final response = await http.get(
+      Uri.parse("${ApiConfig.baseUrl}/me"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    dynamic body;
+    try {
+      body = jsonDecode(response.body);
+    } catch (_) {
+      body = {"msg": response.body};
+    }
+
+    return {"status": response.statusCode, "data": body};
   }
 }

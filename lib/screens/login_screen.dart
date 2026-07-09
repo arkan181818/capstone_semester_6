@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../routes/app_routes.dart';
 import '../services/auth_service.dart';
@@ -14,7 +14,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
-  int selectedRole = 1;
 
   Future<void> loginUser() async {
     final email = emailController.text.trim();
@@ -37,15 +36,16 @@ class _LoginScreenState extends State<LoginScreen> {
       final result = await AuthService.login(
         email: email,
         password: password,
-        role: selectedRole,
       );
 
       if (result['status'] == 200) {
         final message = result['data']['msg'] ?? 'Login berhasil';
         final data = result['data'];
-        final int role = (data is Map<String, dynamic> && data['role'] is int)
-            ? data['role'] as int
-            : selectedRole;
+        
+        int role = 1;
+        if (data is Map<String, dynamic> && data['role'] != null) {
+          role = int.tryParse(data['role'].toString()) ?? 1;
+        }
 
         Get.snackbar(
           'Sukses',
@@ -164,33 +164,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),
-                ),
-                const SizedBox(height: 15),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("LOGIN SEBAGAI"),
-                ),
-                const SizedBox(height: 5),
-                DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  initialValue: selectedRole,
-                  items: const [
-                    DropdownMenuItem(
-                      value: 1,
-                      child: Text("User"),
-                    ),
-                    DropdownMenuItem(
-                      value: 2,
-                      child: Text("EO"),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedRole = value ?? 1;
-                    });
-                  },
                 ),
                 const SizedBox(height: 20),
                 SizedBox(

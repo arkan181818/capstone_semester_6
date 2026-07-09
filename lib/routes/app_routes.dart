@@ -15,4 +15,6 @@ abstract class AppRoutes {
   static const eoEventForm = '/eo-event-form';
   static const riwayat = '/riwayat';
   static const notification = '/notification';
+  static const riwayatScan = '/riwayat-scan';
+  static const faceScan = '/face-scan';
 }
