@@ -1,6 +1,6 @@
 class ApiConfig {
-
+  // Local: http://192.168.x.x:5000
+  // Railway: ganti dengan URL dari Settings > Domains di Railway
   static const String baseUrl =
-    "http://192.168.1.6:5000";
-
+    "https://backend-app-production-40f9.up.railway.app";
 }

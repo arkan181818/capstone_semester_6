@@ -53,7 +53,9 @@ class _LoginScreenState extends State<LoginScreen> {
           snackPosition: SnackPosition.BOTTOM,
         );
 
-        if (role == 2) {
+        if (role == 3) {
+          Get.offAllNamed(AppRoutes.superadminDashboard);
+        } else if (role == 2) {
           Get.offAllNamed(AppRoutes.dashboard);
         } else {
           Get.offAllNamed(AppRoutes.home);

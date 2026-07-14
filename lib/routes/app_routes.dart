@@ -17,4 +17,8 @@ abstract class AppRoutes {
   static const notification = '/notification';
   static const riwayatScan = '/riwayat-scan';
   static const faceScan = '/face-scan';
+  // Super Admin
+  static const superadminDashboard = '/superadmin-dashboard';
+  static const superadminEvents    = '/superadmin-events';
+  static const superadminUsers     = '/superadmin-users';
 }

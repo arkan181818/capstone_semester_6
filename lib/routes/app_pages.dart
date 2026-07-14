@@ -17,6 +17,9 @@ import '../riwayat_screen.dart';
 import '../notification_screen.dart';
 import '../screens/scan_history_screen.dart';
 import '../screens/face_scan_simulation_screen.dart';
+import '../screens/superadmin/superadmin_dashboard_screen.dart';
+import '../screens/superadmin/superadmin_event_list_screen.dart';
+import '../screens/superadmin/superadmin_user_list_screen.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -39,5 +42,9 @@ class AppPages {
     GetPage(name: AppRoutes.notification, page: () => const NotificationScreen()),
     GetPage(name: AppRoutes.riwayatScan, page: () => const ScanHistoryScreen()),
     GetPage(name: AppRoutes.faceScan, page: () => const FaceScanSimulationScreen()),
+    // Super Admin
+    GetPage(name: AppRoutes.superadminDashboard, page: () => const SuperAdminDashboardScreen()),
+    GetPage(name: AppRoutes.superadminEvents, page: () => const SuperAdminEventListScreen()),
+    GetPage(name: AppRoutes.superadminUsers, page: () => const SuperAdminUserListScreen()),
   ];
 }
