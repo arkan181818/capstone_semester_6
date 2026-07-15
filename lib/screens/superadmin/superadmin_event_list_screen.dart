@@ -237,7 +237,8 @@ class _SuperAdminEventListScreenState
 
   Widget _buildEventCard(Map<String, dynamic> e) {
     final status = e['status'] as String?;
-    final isPending = status == 'pending_approval';
+    final isPending = status == 'pending_approval' || status == 'draft';
+    print("DEBUG Kelola Event: status=$status, isPending=$isPending");
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),

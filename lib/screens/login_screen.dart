@@ -68,10 +68,10 @@ class _LoginScreenState extends State<LoginScreen> {
           snackPosition: SnackPosition.BOTTOM,
         );
       }
-    } catch (_) {
+    } catch (error) {
       Get.snackbar(
         'Error',
-        'Gagal menghubungkan ke server',
+        'Gagal menghubungkan ke server: $error',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
