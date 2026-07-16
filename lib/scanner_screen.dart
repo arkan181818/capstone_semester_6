@@ -57,36 +57,23 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   Future<void> _startFaceCheckin() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.camera,
-      preferredCameraDevice: CameraDevice.front,
-    );
-    if (pickedFile == null) return;
-
-    final bytes = await pickedFile.readAsBytes();
-    final filename = pickedFile.name;
-
     setState(() {
       isFaceScanning = true;
       faceScanStatus = "Mendeteksi wajah...";
     });
     _faceAnimationController.repeat(reverse: true);
 
-    await Future.delayed(const Duration(milliseconds: 2000));
+    await Future.delayed(const Duration(milliseconds: 2500));
     if (!mounted) return;
 
     setState(() {
       faceScanStatus = "Mencocokkan wajah dengan foto selfie...";
     });
 
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
 
-    final match = await EventService.matchFace(
-      imageBytes: bytes,
-      imageName: filename,
-    );
+    final match = await EventService.matchFace();
     
     if (!mounted) return;
     setState(() {

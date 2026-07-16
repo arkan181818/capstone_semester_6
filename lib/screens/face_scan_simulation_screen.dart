@@ -54,38 +54,19 @@ class _FaceScanSimulationScreenState extends State<FaceScanSimulationScreen>
   }
 
   Future<void> _startFaceScanning() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.camera,
-      preferredCameraDevice: CameraDevice.front,
-    );
-    if (pickedFile == null) {
-      Get.back(result: false);
-      return;
-    }
-
-    final bytes = await pickedFile.readAsBytes();
-    final filename = pickedFile.name;
-
-    setState(() {
-      statusMessage = "Mendeteksi wajah...";
-    });
-
-    await Future.delayed(const Duration(milliseconds: 2000));
-    if (!mounted) return;
+    await Future.delayed(const Duration(milliseconds: 2500));
     
+    if (!mounted) return;
     setState(() {
       statusMessage = isDirect ? "Mendeteksi wajah..." : "Mencocokkan dengan foto pendaftaran...";
     });
 
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1500));
+
     if (!mounted) return;
     
     if (isDirect) {
-      final match = await EventService.matchFace(
-        imageBytes: bytes,
-        imageName: filename,
-      );
+      final match = await EventService.matchFace();
       if (!mounted) return;
 
       if (match != null) {
@@ -117,11 +98,7 @@ class _FaceScanSimulationScreenState extends State<FaceScanSimulationScreen>
       }
     } else {
       if (registrationId == null) return;
-      final success = await EventService.checkinEventParticipant(
-        registrationId: registrationId!,
-        imageBytes: bytes,
-        imageName: filename,
-      );
+      final success = await EventService.checkinEventParticipant(registrationId!);
 
       if (!mounted) return;
 
