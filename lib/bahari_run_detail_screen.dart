@@ -17,13 +17,13 @@ class BahariRunDetailScreen extends StatefulWidget {
   final String location;
 
   const BahariRunDetailScreen({
-    Key? key,
+    super.key,
     this.eventId = 1,
     this.title = 'BAHARI RUN',
     this.price = 'IDR 250.000',
     this.date = '24 Oct 2024',
     this.location = 'Alun-Alun Tegal',
-  }) : super(key: key);
+  });
 
   @override
   State<BahariRunDetailScreen> createState() => _BahariRunDetailScreenState();
@@ -183,7 +183,7 @@ class _BahariRunDetailScreenState extends State<BahariRunDetailScreen> {
 
     return Stack(
       children: [
-        Container(
+        SizedBox(
           height: 220,
           width: double.infinity,
           child: bannerUrl != null

@@ -109,7 +109,7 @@ class _EOEventListScreenState extends State<EOEventListScreen> {
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: events.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final event = events[index];
                 return Card(

@@ -157,7 +157,7 @@ class _EOEventFormScreenState extends State<EOEventFormScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownButtonFormField<int>(
-              value: selectedCategoryId,
+              initialValue: selectedCategoryId,
               decoration: const InputDecoration(
                 labelText: 'Kategori Event',
                 border: OutlineInputBorder(),

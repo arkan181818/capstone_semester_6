@@ -5,6 +5,7 @@ import 'controllers/eo_bottom_nav_controller.dart';
 import 'widgets/eo_bottom_nav.dart';
 import 'services/event_service.dart';
 import 'config/api_config.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
@@ -56,23 +57,36 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   Future<void> _startFaceCheckin() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.front,
+    );
+    if (pickedFile == null) return;
+
+    final bytes = await pickedFile.readAsBytes();
+    final filename = pickedFile.name;
+
     setState(() {
       isFaceScanning = true;
       faceScanStatus = "Mendeteksi wajah...";
     });
     _faceAnimationController.repeat(reverse: true);
 
-    await Future.delayed(const Duration(milliseconds: 2500));
+    await Future.delayed(const Duration(milliseconds: 2000));
     if (!mounted) return;
 
     setState(() {
       faceScanStatus = "Mencocokkan wajah dengan foto selfie...";
     });
 
-    await Future.delayed(const Duration(milliseconds: 1500));
+    await Future.delayed(const Duration(milliseconds: 1000));
     if (!mounted) return;
 
-    final match = await EventService.matchFace();
+    final match = await EventService.matchFace(
+      imageBytes: bytes,
+      imageName: filename,
+    );
     
     if (!mounted) return;
     setState(() {

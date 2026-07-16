@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/event_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FaceScanSimulationScreen extends StatefulWidget {
   const FaceScanSimulationScreen({super.key});
@@ -53,19 +54,38 @@ class _FaceScanSimulationScreenState extends State<FaceScanSimulationScreen>
   }
 
   Future<void> _startFaceScanning() async {
-    await Future.delayed(const Duration(milliseconds: 2500));
-    
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.front,
+    );
+    if (pickedFile == null) {
+      Get.back(result: false);
+      return;
+    }
+
+    final bytes = await pickedFile.readAsBytes();
+    final filename = pickedFile.name;
+
+    setState(() {
+      statusMessage = "Mendeteksi wajah...";
+    });
+
+    await Future.delayed(const Duration(milliseconds: 2000));
     if (!mounted) return;
+    
     setState(() {
       statusMessage = isDirect ? "Mendeteksi wajah..." : "Mencocokkan dengan foto pendaftaran...";
     });
 
-    await Future.delayed(const Duration(milliseconds: 1500));
-
+    await Future.delayed(const Duration(milliseconds: 1000));
     if (!mounted) return;
     
     if (isDirect) {
-      final match = await EventService.matchFace();
+      final match = await EventService.matchFace(
+        imageBytes: bytes,
+        imageName: filename,
+      );
       if (!mounted) return;
 
       if (match != null) {
@@ -97,7 +117,11 @@ class _FaceScanSimulationScreenState extends State<FaceScanSimulationScreen>
       }
     } else {
       if (registrationId == null) return;
-      final success = await EventService.checkinEventParticipant(registrationId!);
+      final success = await EventService.checkinEventParticipant(
+        registrationId: registrationId!,
+        imageBytes: bytes,
+        imageName: filename,
+      );
 
       if (!mounted) return;
 

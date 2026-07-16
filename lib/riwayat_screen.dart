@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'services/event_service.dart';
 import 'models/registration_model.dart';
 import 'config/api_config.dart';

@@ -379,7 +379,7 @@ class EventService {
     }
 
     final items = body is List ? body : [];
-    return (items as List<dynamic>)
+    return (items)
         .map((e) => RegistrationModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
@@ -527,20 +527,28 @@ class EventService {
     return [];
   }
 
-  static Future<bool> checkinEventParticipant(int registrationId) async {
+  static Future<bool> checkinEventParticipant({
+    required int registrationId,
+    required List<int> imageBytes,
+    required String imageName,
+  }) async {
     final token = AuthService.accessToken;
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
-    if (token != null && token.isNotEmpty) {
-      headers['Authorization'] = 'Bearer $token';
-    }
+    final uri = Uri.parse('${ApiConfig.baseUrl}/event/checkin-event/$registrationId');
+    
+    final request = http.MultipartRequest('PUT', uri);
+    request.headers['Authorization'] = 'Bearer ${token ?? ''}';
+    
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'face_image',
+        imageBytes,
+        filename: imageName,
+      ),
+    );
+    
     try {
-      final response = await http.put(
-        Uri.parse('${ApiConfig.baseUrl}/event/checkin-event/$registrationId'),
-        headers: headers,
-      );
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
       if (response.statusCode == 200) {
         return true;
       }
@@ -551,20 +559,28 @@ class EventService {
     return true; // Bypass failure for demo reliability
   }
 
-  static Future<Map<String, dynamic>?> matchFace() async {
+  static Future<Map<String, dynamic>?> matchFace({
+    required List<int> imageBytes,
+    required String imageName,
+  }) async {
     final token = AuthService.accessToken;
     if (token == null || token.isEmpty) return null;
 
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
+    final uri = Uri.parse('${ApiConfig.baseUrl}/event/match-face');
+    final request = http.MultipartRequest('POST', uri);
+    request.headers['Authorization'] = 'Bearer $token';
+    
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'face_image',
+        imageBytes,
+        filename: imageName,
+      ),
+    );
 
     try {
-      final response = await http.post(
-        Uri.parse('${ApiConfig.baseUrl}/event/match-face'),
-        headers: headers,
-      );
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;

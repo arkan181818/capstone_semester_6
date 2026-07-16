@@ -133,7 +133,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: list.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final item = list[index];
 
